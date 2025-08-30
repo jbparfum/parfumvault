@@ -1,12 +1,3 @@
-#!/bin/sh
-#
-#
-# Reset admin pass
-# Script Version: v1.7
-# Author: John Belekios <john@perfumersvault.com>
-#
-#
-
 #!/bin/bash
 
 EMAIL=$1
