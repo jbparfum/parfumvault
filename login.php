@@ -42,14 +42,10 @@ $placeholders = [
     '{{fontawesome_css}}' => '/css/fontawesome-free/css/all.min.css',
     '{{body_class}}' => 'bg-gradient-primary',
     '{{content}}' => generateContent($conn),
-    '{{product_url}}' => 'https://www.perfumersvault.com',
+    '{{product_url}}' => '#',
     '{{product_name}}' => htmlspecialchars($product),
     '{{version}}' => htmlspecialchars($ver . " " . $commit),
-    '{{appstore_pv}}' => 'https://apps.apple.com/us/app/perfumers-vault-2/id6748814424',
-    '{{appstore_pv_img}}' => '/img/appstore/get_pv.png',
-    '{{appstore_aroma}}' => 'https://apps.apple.com/us/app/aromatrack/id6742348411',
-    '{{appstore_aroma_img}}' => '/img/appstore/get_aroma_track.png',
-    '{{copyright_year}}' => date('Y'),
+   '{{copyright_year}}' => date('Y'),
 ];
 
 // Escape curly braces for preg_replace
