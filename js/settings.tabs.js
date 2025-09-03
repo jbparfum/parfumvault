@@ -183,7 +183,16 @@ $(document).ready(function() {
 		});
 	};
 	
-
+	function get_api(){
+		$.ajax({ 
+			url: '/pages/views/settings/api.php', 
+			dataType: 'html',
+			success: function (data) {
+				$('#api').html(data);
+			}
+		});
+	};
+	
 	function get_general(){
 		$.ajax({ 
 			url: '/pages/views/settings/general.php', 

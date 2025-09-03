@@ -26,6 +26,7 @@ require_once(__ROOT__.'/func/php-settings.php');
           <li><a href="#maintenance" id="maintenance_tab" role="tab" data-bs-toggle="tab"><i class="bi bi-tools mx-2"></i>Maintenance</a></li>
           <li><a href="#syslogs" id="logs_tab" role="tab" data-bs-toggle="tab"><i class="bi bi-journal-text mx-2"></i>System logs</a></li>
         <?php } ?>
+        <li><a href="#api" id="api_tab" role="tab" data-bs-toggle="tab"><i class="bi bi-cloud mx-2"></i>API</a></li>
         <li><a href="#about" id="about_tab" role="tab" data-bs-toggle="tab"><i class="bi bi-info-circle mx-2"></i>About</a></li>
     </ul>
     
@@ -124,7 +125,12 @@ require_once(__ROOT__.'/func/php-settings.php');
           </div>
       </div>
         
-
+      <div id="api">
+        <div class="loader-center">
+          <div class="loader"></div>
+          <div class="loader-text"></div>
+        </div>
+      </div>
       <?php if($role === 1){?>  
       <div id="maintenance">
         <div class="loader-center">

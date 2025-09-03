@@ -892,7 +892,8 @@ CREATE TABLE `system_settings` (
 
 INSERT INTO `system_settings` ( `key_name`, `value`, `slug`, `type`, `description`) VALUES
 ('SYSTEM_pubChem', '0', 'Enable PubChem', 'checkbox', 'Enable or disable pubChem integration'),
-('SYSTEM_server_url', '<UPDATE_TO_YOUR_SERVER_URL>', 'Server URL', 'text', 'This is your Perfumers Vault installation server URL.');
+('SYSTEM_server_url', '<UPDATE_TO_YOUR_SERVER_URL>', 'Server URL', 'text', 'This is your Perfumers Vault installation server URL.'),
+('API_enabled', '0', 'API access', 'checkbox', 'Enable or disable API access globally');
 
 CREATE TABLE `user_settings` (
     `id` INT(11) NOT NULL AUTO_INCREMENT ,

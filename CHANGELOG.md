@@ -1,7 +1,6 @@
 # CHANGELOG
-- Removed API functions
+- Update API functions
 - Removed Deprecated links
-
 
 ### Version 13.9
 - Obsolete code removed
