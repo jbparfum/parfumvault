@@ -88,8 +88,8 @@ if ($key && $do === 'auth') {
 }
 
 $validEndpoints = [
-    'upload' => ['formulas', 'ingredients', 'aromatrack'],
-    'get' => ['formulas', 'ingredients', 'categories', 'suppliers', 'documents', 'ifra', 'aromatrack'],
+    'upload' => ['formulas', 'ingredients'],
+    'get' => ['formulas', 'ingredients', 'categories', 'suppliers', 'documents', 'ifra'],
     'manage' => ['makeformula']
 ];
 
@@ -115,10 +115,6 @@ switch ($do) {
             validateKeyAndExecute($conn, $key, function () {
                 require_once(__ROOT__ . '/api-functions/ingredients_upload.php');
             });
-        } elseif ($type === 'aromatrack') {
-            validateKeyAndExecute($conn, $key, function () {
-                require_once(__ROOT__ . '/api-functions/aromatrack_upload.php');
-            });
         } else {
             header('Content-Type: application/json; charset=utf-8');
             echo json_encode([
@@ -137,7 +133,6 @@ switch ($do) {
             'suppliers' => '/api-functions/suppliers_get.php',
             'documents' => '/api-functions/documents_get.php',
             'ifra' => '/api-functions/ifra_get.php',
-            'aromatrack' => '/api-functions/aromatrack_get.php',
             'makeformulas' => '/api-functions/makeformulas.php'
         ];
         if (isset($apiFileMap[$type])) {
