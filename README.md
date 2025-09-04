@@ -4,8 +4,6 @@ Perfumers Vault is an advanced formulation management platform tailored for the 
 
 This is FREE software provided "as is" without ANY warranty under the MIT license.
 
-[![Current Release](https://img.shields.io/github/v/release/jbparfum/parfumvault.svg "Current Release")](https://github.com/jbparfum/parfumvault/releases/latest)
-
 ---
 
 ## Features
