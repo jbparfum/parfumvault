@@ -1,0 +1,9 @@
+.htaccess
+request.log
+tmp/
+logs/
+uploads/
+batches/
+inc/config.php
+tests/
+classes/

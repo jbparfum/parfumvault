@@ -1,0 +1,31 @@
+---
+services:
+  pvdb:
+    image: mariadb:11-ubi9
+    command: '--default-authentication-plugin=mysql_native_password --innodb-flush-method=fsync'
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: pvault
+      MYSQL_DATABASE: pvault
+      MYSQL_USER: pvault
+      MYSQL_PASSWORD: pvault
+      MARIADB_AUTO_UPGRADE: true
+    expose:
+      - 3306
+  pvault:
+    image: jbparfum/perfumersvault:latest
+    ports:
+      - 8000:8000
+    restart: always
+    environment:
+      PLATFORM: CLOUD
+      DB_HOST: pvdb
+      DB_USER: pvault
+      DB_PASS: pvault
+      DB_NAME: pvault
+      UPLOAD_MAX_FILESIZE: '4194304'
+      TMP_PATH: /tmp/
+      FILE_EXT: 'pdf, doc, docx, xls, csv, xlsx, png, jpg, jpeg, gif'
+      DB_BACKUP_PARAMETERS: '--column-statistics=1'

@@ -1,0 +1,64 @@
+@page { 
+	margin-right: 0.69in; 
+	margin-top: 0.39in; 
+	margin-bottom: 0.59in; 
+}
+
+p { 
+	margin-bottom: 0in; 
+	direction: ltr; 
+	color:  var(--bs-body-color); 
+	widows: 2; 
+	orphans: 2;
+}
+
+p.western { 
+	font-family: "Times New Roman", serif; 
+	font-size: 10pt; 
+}
+
+p.cjk { 
+	font-family: "Times New Roman", serif; 
+	font-size: 10pt 
+}
+
+p.ctl { 
+	font-family: "Times New Roman", serif; 
+	font-size: 10pt; 
+}
+
+h1 { 
+	margin-top: 0in; 
+	margin-bottom: 0in; 
+	direction: ltr; 
+	color:  var(--bs-body-color);
+	text-align: center; 
+	widows: 2; 
+	orphans: 2;
+}
+
+h1.western { 
+	font-family: "Helvetica 45 Light", "Vrinda", sans-serif; 
+	font-size: 16pt; 
+	font-style: italic;
+}
+
+h1.cjk { 
+	font-family: "Times New Roman", serif; 
+	font-size: 16pt; 
+	font-style: italic;
+}
+
+h1.ctl { 
+	font-family: "Helvetica 45 Light", "Vrinda", sans-serif; 
+	font-size: 10pt; 
+	font-weight: normal; 
+}
+
+body {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  margin: 0;
+  padding: 0;
+  font-family: var(--bs-body-font-family); /* Use Bootstrap's default font */
+}

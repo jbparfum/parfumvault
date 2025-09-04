@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Module Integration Guide</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+  }
+  pre {
+    background-color: #f4f4f4;
+    padding: 10px;
+    border: 1px solid #ddd;
+    overflow-x: auto;
+  }
+  ul {
+    list-style-type: disc;
+    margin-left: 20px;
+  }
+</style>
+</head>
+
+<body>
+<h1>Modules</h1>
+<p>You can search directly to your supplier for ingredients by integrating its API here.</p>
+<p>For example, given your supplier provides a valid API to return its products, you can write simple modules to import the data directly to your local PV database.</p>
+
+<h2>Structure</h2>
+<ul>
+  <li>supplier1.json</li>
+  <li>supplier1.php</li>
+</ul>
+<p>The JSON file contains the supplier data needed to register with PV, e.g.:</p>
+<pre>
+{
+  "id": "supplier_id",
+  "name": "My custom Supplier",
+  "slug": "mycustomsupplier",
+  "version": "1.0",
+  "fileName": "supplier1.php",
+  "icon": "fas fa-database"
+}
+</pre>
+<p>The PHP file should contain the code that queries the supplier's API and returns the results in JSON format, e.g.:</p>
+<pre>
+{
+  "draw": 1,
+  "recordsTotal": 1,
+  "recordsFiltered": 1,
+  "data": [
+    [
+      "ambermax (Givaudan) - 50% TPM",
+      
+      ...
+
+      "My custom Supplier",
+      
+      ...
+    ]
+  ]
+}
+</pre>
+</body>
+</html>

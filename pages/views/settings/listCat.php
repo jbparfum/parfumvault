@@ -1,0 +1,334 @@
+<?php 
+
+define('__ROOT__', dirname(dirname(dirname(dirname(__FILE__))))); 
+
+require_once(__ROOT__.'/inc/sec.php');
+require_once(__ROOT__.'/inc/opendb.php');
+
+?>
+<h3>Ingredient Categories</h3>
+<hr>
+<div class="card-body">
+  <div class="text-right">
+    <div class="btn-group" id="menu">
+        <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bars mx-2"></i>Actions</button>
+        <div class="dropdown-menu">
+          <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#add_ingredient_cat"><i class="fa-solid fa-plus mx-2"></i>Add ingredient category</a></li>
+          <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#import_categories_json"><i class="fa-solid fa-file-import mx-2"></i>Import from JSON</a></li>
+
+          <li><a class="dropdown-item" href="/core/core.php?action=exportIngCat"><i class="fa-solid fa-file-code mx-2"></i>Export as JSON</a></li>
+          
+        </div>
+    </div>
+  </div>
+</div>
+<div class="card-body">
+	<table id="tdDataCat" class="table table-striped nowrap" style="width:100%">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th></th>
+        </tr>
+      </thead>
+    </table>
+</div>
+                
+<script>
+$(document).ready(function() {
+	var tdDataCat = $('#tdDataCat').DataTable( {
+		columnDefs: [
+			{ className: 'text-center', targets: '_all' },
+			{ orderable: false, targets: [0,3] }
+        ],
+		dom: 'lfrtip',
+		processing: true,
+        language: {
+			loadingRecords: '&nbsp;',
+			processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>',
+			emptyTable: '<div class="row g-3 mt-1"><div class="alert alert-info"><i class="fa-solid fa-circle-info mx-2"></i><strong>No categories added yet</strong></div></div>',
+			zeroRecords: '<div class="row g-3 mt-1"><div class="alert alert-info"><i class="fa-solid fa-circle-info mx-2"></i><strong>Nothing found</strong></div></div>',
+			search: '',
+			searchPlaceholder: 'Search by name...',
+		},
+    	ajax: {	url: '/core/list_ingCat_data.php' },
+		columns: [
+			   { data : 'image', title: 'Image', render: ciImage },
+			   { data : 'name', title: 'Name', render: ciName},
+			   { data : 'notes', title: 'Description', render: ciNotes},
+   			   { data : null, title: '', render: ciActions},		   
+		],
+        order: [[ 2, 'asc' ]],
+		lengthMenu: [[20, 50, 100, -1], [20, 50, 100, "All"]],
+        pageLength: 20,
+		displayLength: 20,
+		drawCallback: function( settings ) {
+			extrasShow();
+    	},
+		stateSave: true,
+		stateDuration: -1,
+		stateLoadCallback: function (settings, callback) {
+			$.ajax( {
+				url: '/core/update_user_settings.php?set=listCat&action=load',
+				dataType: 'json',
+				success: function (json) {
+					callback( json );
+				}
+			});
+		},
+		stateSaveCallback: function (settings, data) {
+		   $.ajax({
+			 url: "/core/update_user_settings.php?set=listCat&action=save",
+			 data: data,
+			 dataType: "json",
+			 type: "POST"
+		  });
+		},
+
+	});
+
+	function ciImage(data, type, row){
+		if(row.image){
+			var cimg = '<img src="' + row.image + '" class="img_ing">';
+		}else{
+			var cimg = '<img src="/img/molecule.png" class="img_ing">';
+		}
+		
+		return '<a href="#" data-id="'+row.id+'" data-bs-toggle="modal" data-bs-target="#editCategory">' + cimg + '</a>';    
+	};
+	
+	
+	function ciName(data, type, row){
+		return '<a class="name pv_point_gen" data-name="name" data-type="text" data-pk="'+row.id+'">'+row.name+'</a>';    
+	};
+	
+	function ciNotes(data, type, row){
+		d = row.notes;
+		//if (d.length>255) { d=d.substring(0,255)+'...' };
+		return '<a class="notes pv_point_gen text-wrap-2" data-name="notes" data-type="textarea" data-pk="'+row.id+'">'+d+'</a>';  
+	};
+	
+	function ciActions(data, type, row){
+		data = '<div class="dropdown">' +
+		'<button type="button" class="btn btn-floating hidden-arrow" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>' +
+			'<ul class="dropdown-menu">';
+		
+		data += '<li><a class="dropdown-item" href="#" data-id="'+row.id+'" data-bs-toggle="modal" data-bs-target="#editCategory"><i class="fa-solid fa-file-import mx-2"></i>Upload pic</a></li>';
+		data += '<li><a class="dropdown-item text-danger" href="#" id="catDel" rel="tip" title="Delete '+ row.name +'" data-id='+ row.id +' data-name="'+ row.name +'"><i class="fas fa-trash mx-2"></i>Delete</a></li>';
+		data += '</ul></div>';
+		return data;		
+	};
+	
+	$('#add-category').click(function() {
+	$.ajax({ 
+		url: '/core/core.php', 
+			type: 'POST',
+			data: {
+				manage: 'category',
+				category: $("#category").val(),
+				cat_notes: $("#cat_notes").val(),
+			},
+			dataType: 'json',
+			success: function (data) {
+				if ( data.success ) {
+					$('#toast-title').html('<i class="fa-solid fa-circle-check mr-2"></i>' + data.success);
+					$('.toast-header').removeClass().addClass('toast-header alert-success');
+					$('#add_ingredient_cat').modal('toggle');
+					reload_data();
+					$('.toast').toast('show');
+				} else {
+					var msg = '<div class="alert alert-danger"><i class="fa-solid fa-circle-exclamation mx-2"></i>'+data.error+'</div>';
+					$('#catMsgIn').html(msg);
+				}
+				
+			}
+		});
+	});
+	
+	
+	
+	$('#tdDataCat').editable({
+		container: 'body',
+	  	selector: 'a.name',
+	  	url: "/core/core.php?action=ingredientCategories",
+	  	title: 'Category',
+	  	ajaxOptions: {
+			type: "POST",
+			dataType: 'json'
+		},
+		success: function (data) {
+			if (data.success) {
+				reload_data();
+			} else if (data.error) {
+				$('#toast-title').html('<i class="fa-solid fa-warning mx-2"></i>' + data.error);
+				$('.toast-header').removeClass().addClass('toast-header alert-danger');
+				$('.toast').toast('show');
+			}
+		},
+		error: function (xhr, status, error) {
+			$('#toast-title').html('<i class="fa-solid fa-circle-exclamation mx-2"></i> An error occurred, check server logs for more info. '+ error);
+			$('.toast-header').removeClass().addClass('toast-header alert-danger');
+			$('.toast').toast('show');
+		},
+	  	validate: function(value){
+	   		if($.trim(value) == ''){
+				return 'This field is required';
+	   		}
+	  	}
+	});
+	 
+	$('#tdDataCat').editable({
+		container: 'body',
+		selector: 'a.notes',
+		url: "/core/core.php?action=ingredientCategories",
+		title: 'Description',
+		ajaxOptions: {
+			type: "POST",
+			dataType: 'json'
+		},
+		success: function (data) {
+			if (data.success) {
+				reload_data();
+			} else if (data.error) {
+				$('#toast-title').html('<i class="fa-solid fa-warning mx-2"></i>' + data.error);
+				$('.toast-header').removeClass().addClass('toast-header alert-danger');
+				$('.toast').toast('show');
+			}
+		},
+		error: function (xhr, status, error) {
+			$('#toast-title').html('<i class="fa-solid fa-circle-exclamation mx-2"></i> An error occurred, check server logs for more info. '+ error);
+			$('.toast-header').removeClass().addClass('toast-header alert-danger');
+			$('.toast').toast('show');
+		},
+	});
+
+		
+	$('#tdDataCat').on('click', '[id*=catDel]', function () {
+		var cat = {};
+		cat.ID = $(this).attr('data-id');
+		cat.Name = $(this).attr('data-name');
+		
+		bootbox.dialog({
+		   title: "Confirm category deletion",
+		   message : 'Delete <strong>'+ $(this).attr('data-name') +'</strong> category?',
+		   buttons :{
+			   main: {
+				   label : "Delete",
+				   className : "btn-danger",
+				   callback: function (){
+						
+						$.ajax({ 
+							url: '/core/core.php', 
+							type: 'POST',
+							data: {
+								action: "delete",
+								catId: cat.ID,
+							},
+							dataType: 'json',
+							success: function (data) {
+								if ( data.success ) {
+									$('#toast-title').html('<i class="fa-solid fa-circle-check mr-2"></i>' + data.success);
+									$('.toast-header').removeClass().addClass('toast-header alert-success');
+									reload_data();
+								} else {
+									$('#toast-title').html('<i class="fa-solid fa-circle-exclamation mr-2"></i>' + data.error);
+									$('.toast-header').removeClass().addClass('toast-header alert-danger');
+								}
+								$('.toast').toast('show');
+							},
+							error: function (xhr, status, error) {
+								$('#toast-title').html('<i class="fa-solid fa-circle-exclamation mx-2"></i> An error occurred, check server logs for more info. '+ error);
+								$('.toast-header').removeClass().addClass('toast-header alert-danger');
+								$('.toast').toast('show');
+							},
+					  });
+					 return true;
+				   }
+			   },
+			   cancel: {
+				   label : "Cancel",
+				   className : "btn-secondary",
+				   callback : function() {
+					   return true;
+				   }
+			   }   
+		   },onEscape: function () {return true;}
+	   });
+	});
+	
+	function reload_data() {
+		$('#tdDataCat').DataTable().ajax.reload(null, true);
+	};
+	
+	function extrasShow() {
+		$('[rel=tip]').tooltip({
+			"html": true,
+			"delay": {"show": 100, "hide": 0},
+		 });
+	};
+	
+	$("#editCategory").on("show.bs.modal", function(e) {
+		const id = e.relatedTarget.dataset.id;
+		const name = e.relatedTarget.dataset.name;
+	
+		$.get("/pages/views/settings/editCat.php?id=" + id)
+			.then(data => {
+			$("#editCategoryLabel", this).html(name);
+			$(".modal-body", this).html(data);
+		});
+	});
+
+
+});
+
+</script>
+<!--ADD CATEGORY MODAL-->
+<div class="modal fade" id="add_ingredient_cat" data-bs-backdrop="static" tabindex="-1" aria-labelledby="add_ingredient_cat" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add new category</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> 
+      </div>
+      
+      <div class="modal-body">
+        <div id="catMsgIn"></div>
+        <div class="form-group">
+          <div class="mb-3">
+            <label for="category" class="form-label">Name</label>
+            <input type="text" name="category" id="category" class="form-control"/>
+          </div>
+          <div class="mb-3">
+            <label for="cat_notes" class="form-label">Description</label>
+            <input type="text" name="cat_notes" id="cat_notes" class="form-control"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <input type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="close_cat" value="Close">
+        <input type="submit" name="add-category" class="btn btn-primary" id="add-category" value="Create">
+      </div>   
+    </div>
+  </div>
+</div>
+
+
+<!--EDIT MODAL-->            
+<div class="modal fade" id="editCategory" data-bs-backdrop="static" tabindex="-1" aria-labelledby="editCategoryLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title mgmIngHeader mgmIngHeader-with-separator" id="editCategoryLabel">Edit category</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger">Unable to get data</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
