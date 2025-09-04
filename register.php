@@ -84,7 +84,7 @@ if(isset($_SESSION['parfumvault'])){
                                         <a class="small" href="/login.php">Already have an account? Login!</a>
                                     </div>
                                     <div class="copyright text-center my-auto">
-                                        <label class="small">Version: <?php echo $ver; ?> |<a href="https://www.perfumersvault.com/" class="mx-1" target="_blank"><?php echo $product; ?></a></label>
+                                        <label class="small">Version: <?php echo $ver; ?> | <?php echo $product; ?></label>
                                     </div>
                                 </div>
                             </div>
